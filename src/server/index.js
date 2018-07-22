@@ -6,10 +6,9 @@ const logger = require('winston');
 const uuid = require('uuid');
 const WS_PATH = '/ws';
 const SERVER_PORT = 3201;
-const SEQUENCE_NUMBER_LENGTH = 10;
 const throttle = require('../lib/index');
 
-throttle.start({up: 0, down: 0, rtt: 1}).then(() => {
+throttle.start({up: 10, down: 10 , rtt: 1}).then(() => {
     let server;
 
     let socketConnections = {};
@@ -55,8 +54,7 @@ throttle.start({up: 0, down: 0, rtt: 1}).then(() => {
 
         socket.on('message', message => {
             console.log('on message', Buffer.byteLength(message, 'utf8') / 1000, 'Kb');
-            // last SEQUENCE_NUMBER_LENGTH chars of the payload are the sequence number;
-            socket.send(message.substring(message.length - SEQUENCE_NUMBER_LENGTH - 1, message.length - 1));
+            socket.send(message);
         });
 
         socket.on('error', () => {

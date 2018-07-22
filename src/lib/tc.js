@@ -10,9 +10,10 @@ async function getDefaultInterface() {
 }
 
 async function modProbe() {
-  console.log('modProbe');
+  console.log('modProbe ');
   try {
-      await sudo('modprobe', 'ifb');
+      const result = await sudo('modprobe', 'ifb', '--numifbs=1');
+      console.log('result', result.stdout);
   } catch (e) {
     // we are probably in a Docker env
     // let us hope that the host is Linux
@@ -124,8 +125,8 @@ module.exports = {
 
     const iFace = await getDefaultInterface();
     console.log(`interface`, iFace);
-    await modProbe();
-    await setup(iFace);
+    // await modProbe();
+    // await setup(iFace);
     await setLimits(up, down, halfWayRTT, iFace);
   },
   async stop() {
