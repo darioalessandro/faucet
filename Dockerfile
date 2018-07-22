@@ -12,7 +12,14 @@ WORKDIR /app
 # Be sure to use either docker or docker-compose NOT BOTH when building
 COPY package.json /app/package.json
 
+# Enable sudo
+RUN apk update
+# Install TC
+RUN apk add --no-cache iproute2
+RUN apk add --no-cache net-tools
+
 WORKDIR /app
 COPY . /app/
+
 
 STOPSIGNAL SIGINT

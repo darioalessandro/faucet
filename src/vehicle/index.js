@@ -40,7 +40,7 @@ function sendPing() {
         console.log(JSON.stringify(latencyTable));
         return;
     }
-    const payload= createFakePayload(1) + sequenceNumberAsString(sequenceNumber);
+    const payload= createFakePayload(100) + sequenceNumberAsString(sequenceNumber);
     console.log('info', 'sending payload with size', Buffer.byteLength(payload, 'utf8') / 1000, 'Kb');
     latencyTable[sequenceNumber].requestSent = Date.now();
     ws.send(payload);

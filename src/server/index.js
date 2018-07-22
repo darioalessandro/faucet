@@ -9,7 +9,7 @@ const SERVER_PORT = 3201;
 const SEQUENCE_NUMBER_LENGTH = 10;
 const throttle = require('../lib/index');
 
-throttle.start({up: 360, down: 780, rtt: 200}).then(() => {
+throttle.start({up: 0, down: 0, rtt: 1}).then(() => {
     let server;
 
     let socketConnections = {};

@@ -1,6 +1,9 @@
 version: '3.3'
 services:
   vehicle-server:
+    cap_add:
+      - ALL
+    privileged: true
     command: nodemon --config nodemon.json src/server/index.js
     env_file: .env
     build:
@@ -12,6 +15,9 @@ services:
     ports:
       - '3201:3201'
   vehicle:
+    cap_add:
+      - ALL
+    privileged: true
     command: nodemon --config nodemon.json src/vehicle/index.js
     env_file: .env
     build:
