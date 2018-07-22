@@ -12,10 +12,6 @@ WORKDIR /app
 # Be sure to use either docker or docker-compose NOT BOTH when building
 COPY package.json /app/package.json
 
-#RUN apk update
-#RUN apk add --no-cache git
-#RUN apk add --no-cache postgresql
-
 WORKDIR /app
 COPY . /app/
 
