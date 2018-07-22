@@ -79,7 +79,7 @@ async function setLimits(up, down, halfWayRTT, iFace) {
     'qdisc',
     'add',
     'dev',
-    'ifb0',
+     iFace,
     'root',
     'handle',
     '1:0',
