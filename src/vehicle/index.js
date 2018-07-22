@@ -1,22 +1,27 @@
-const express = require("express"),
-    app = express(),
-    port = process.env.PORT || 3001;
+const WebSocket = require('ws');
+const http = require('http');
+const express = require('express')();
+const bodyParser = require('body-parser');
+const logger = require('winston');
+const SERVER_URL = 'ws://vehicle-server:3201/ws';
 
-const webRTC = require("wrtc");
+let ws;
 
-app.listen(port);
+function setupWebsocket(vin) {
+    logger.log('info', 'connecting to websocket...');
+    ws = new WebSocket(SERVER_URL, {
+        headers: {
+            vin: vin,
+        },
+    });
+    ws.on('error', (e) => {
+        logger.log('info', e);
+        logger.log('info', e);
+    });
+    ws.on('close', () => logger.error('close'));
+    ws.on('open', () => {
+        logger.log('info', 'open');
+    });
+}
 
-// Enable cors so that we can call the api from the React UI
-
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
-    );
-    next();
-});
-
-app.get("/", function(req, res) {
-    res.send("Backend is Alive");
-});
+setupWebsocket('123');
