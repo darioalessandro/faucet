@@ -1,0 +1,20 @@
+{
+  "name": "avproject",
+  "version": "1.0.0",
+  "description": "paper for 95-705",
+  "main": "index.js",
+  "author": "Dario A Lencina-Talarico",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "express": "4.16.3",
+    "nodemon": "1.18.3",
+    "throttle": "1.0.3",
+    "wrtc": "0.1.6"
+  },
+  "scripts": {
+    "start-server": "nodemon src/server/index.js",
+    "start-vehicle": "nodemon src/vehicle/index.js",
+    "precommit": "lint-staged"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "ignore": ["**/*.so"],
+  "verbose": true,
+  "ext": "js"
+}

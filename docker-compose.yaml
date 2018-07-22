@@ -1,0 +1,30 @@
+version: '3.3'
+services:
+  vehicle-server:
+    command: nodemon --config nodemon.json server/index.js
+    env_file: .env
+    build:
+      context: .
+      cache_from:
+        - node:8.10-alpine
+    volumes:
+      - .:/houston
+    links:
+      - nats
+    ports:
+      - '31337:31337'
+      - '31338:31338'
+  vehicles:
+    entrypoint: ./docker-entrypoint.sh
+    command: nodemon --config nodemon.json vehicle/index.js
+    env_file: .env
+    environment:
+      - EXPERT_MODE_VIDEO_SERVER_URL=expert-video-server:3030
+    build:
+      context: .
+      cache_from:
+        - node:8.10-alpine
+    volumes:
+      - .:/houston
+    links:
+      - vehicle-server
