@@ -74,39 +74,16 @@ async function setup(defaultInterface) {
 async function setLimits(up, down, halfWayRTT, iFace) {
   console.log('set limits');
   try {
-  await sudo(
-    'tc',
-    'qdisc',
-    'add',
-    'dev',
-     iFace,
-    'root',
-    'handle',
-    '1:0',
-    'netem',
-    'delay',
-    `${halfWayRTT}ms`,
-    'rate',
-    `${down}kbit`
-  );
+    await sudo('tc', 'qdisc', 'add', 'dev', iFace, 'handle', 'ffff:', 'ingress');
+    await sudo('tc', 'filter', 'add', 'dev', iFace, 'parent', 'ffff:', 'protocol', 'ip', 'prio', '50',
+    'u32', 'match', 'ip', 'src', '0.0.0.0/0', 'police', 'rate', `${down}kbit`,
+    'burst', '10k', 'drop', 'flowid', ':1');
   }catch(e) {
       console.error(e);
   }
   try {
-  await sudo(
-    'tc',
-    'qdisc',
-    'add',
-    'dev',
-    iFace,
-    'root',
-    'handle',
-    '1:0',
-    'netem',
-    'delay',
-    `${halfWayRTT}ms`,
-    'rate',
-    `${up}kbit`
+    await sudo('tc', 'qdisc', 'add', 'dev', iFace, 'root', 'handle', '1:0',
+    'netem', 'delay', `${halfWayRTT}ms`, 'rate', `${up}kbit`
   );
   }catch(e) {
       console.error(e);
