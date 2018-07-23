@@ -4,8 +4,11 @@ const PING_INTERVAL_MS = 1000;
 const SEQUENCE_NUMBER_LENGTH = 10;
 const NUMBER_OF_TESTS = 1;
 const throttle = require('../lib/index');
+const TestCondition = require('../test-conditions/config').TestConditions;
 
-throttle.start({up: 100, down: 100 , rtt: 1}).then(() => {
+console.log('TestConditions', TestCondition[0]);
+
+throttle.start(TestCondition[0]).then(() => {
     let ws;
     let interval;
     let sequenceNumber =0;

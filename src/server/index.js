@@ -8,7 +8,7 @@ const WS_PATH = '/ws';
 const SERVER_PORT = 3201;
 const throttle = require('../lib/index');
 
-throttle.start({up: 100, down: 10 , rtt: 1}).then(() => {
+throttle.start({up: 100, down: 100 , rtt: 1}).then(() => {
     let server;
 
     let socketConnections = {};
