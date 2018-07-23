@@ -1,5 +1,5 @@
 'use strict';
-const sudo = require('./sudo');
+const sudo = require('./exec');
 
 module.exports = {
   async start(delay) {

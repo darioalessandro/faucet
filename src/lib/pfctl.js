@@ -1,5 +1,5 @@
 'use strict';
-const sudo = require('./sudo');
+const sudo = require('./exec');
 const path = require('path');
 
 const confPath = path.resolve(__dirname, '..', 'conf');
