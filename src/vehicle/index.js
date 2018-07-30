@@ -9,20 +9,13 @@ const TestCondition = require('../test-conditions/config').TestConditions;
 console.log('TestConditions', TestCondition[0]);
 
 throttle.start(TestCondition[0]).then(() => {
-    let ws;
-    let interval;
-    let sequenceNumber =0;
-    let latencyTable = Array(NUMBER_OF_TESTS).fill({
-        requestSent:null,
-        responseReceived:null,
-        roundTrip:null,
-    });
 
     /**
      *
      * @param kb
      * @returns {string}
      */
+
     function createFakePayload(kb) {
         const utf8CharSizeBytes = 2;
         const numberOfCharacters = (kb * 1000) / utf8CharSizeBytes;
