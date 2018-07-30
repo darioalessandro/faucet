@@ -1,79 +1,44 @@
-const WebSocket = require('ws');
+
 const SERVER_URL = 'ws://vehicle-server:3201/ws';
-const PING_INTERVAL_MS = 1000;
 const SEQUENCE_NUMBER_LENGTH = 10;
-const NUMBER_OF_TESTS = 1;
 const throttle = require('../lib/index');
-const TestCondition = require('../test-conditions/config').TestConditions;
+const ServerClient = require('./ServerClient').ServerClient;
 
-console.log('TestConditions', TestCondition[0]);
+function createFakePayload(kb) {
+    const utf8CharSizeBytes = 2;
+    const numberOfCharacters = (kb * 1000) / utf8CharSizeBytes;
+    return Array(numberOfCharacters).fill('-').join('');
+}
 
-throttle.start(TestCondition[0]).then(() => {
+function sequenceNumberAsString(seq) {
+    const s = `${new Array(SEQUENCE_NUMBER_LENGTH - seq.toFixed().length).fill(0).join('')}${seq}`;
+    console.log('s', s);
+    return s;
+}
 
-    /**
-     *
-     * @param kb
-     * @returns {string}
-     */
+async function runTest({ payloadSize, up, down, rtt }) {
+    console.log('running test');
+    console.log('Payload size', payloadSize, 'Kb');
+    console.log('Up rate', up, 'Kbps');
+    console.log('Down rate', down, 'Kbps');
+    console.log('RTT', rtt, 'mS');
+    // await throttle.start({ up, down, rtt});
+    const serverClient = new ServerClient({serverUrl: SERVER_URL});
+    await serverClient.connect({retryCount2: 10});
+    const payload= createFakePayload(payloadSize) + sequenceNumberAsString(1);
+    console.log('info', 'sending payload with size', Buffer.byteLength(payload, 'utf8') / 1000, 'Kb');
+    const requestSent = Date.now();
+    await serverClient.sendAndWaitForResponse(payload);
+    const responseReceived = Date.now();
+    console.log('Request took', responseReceived - requestSent, 'mS');
+    await serverClient.disconnect();
+    await throttle.stop();
+}
 
-    function createFakePayload(kb) {
-        const utf8CharSizeBytes = 2;
-        const numberOfCharacters = (kb * 1000) / utf8CharSizeBytes;
-        return Array(numberOfCharacters).fill('-').join('');
-    }
 
-    function schedulePings() {
-        interval = setInterval(sendPing, PING_INTERVAL_MS);
-    }
-
-    function sequenceNumberAsString(seq) {
-        const s = `${new Array(SEQUENCE_NUMBER_LENGTH - seq.toFixed().length).fill(0).join('')}${seq}`;
-        console.log('s', s);
-        return s;
-    }
-
-    function sendPing() {
-        if (sequenceNumber === NUMBER_OF_TESTS) {
-            clearInterval(interval);
-            return;
-        }
-        const payload= createFakePayload(100) + sequenceNumberAsString(sequenceNumber);
-        console.log('info', 'sending payload with size', Buffer.byteLength(payload, 'utf8') / 1000, 'Kb');
-        latencyTable[sequenceNumber].requestSent = Date.now();
-        ws.send(payload);
-        sequenceNumber++;
-    }
-
-    function connectToServer() {
-        console.log('info', 'connecting to websocket...');
-        ws = new WebSocket(SERVER_URL, {
-            headers: {
-                vin: '123',
-            },
-        });
-        ws.on('error', (e) => {
-            console.log('info', e);
-            setTimeout(() => {
-                connectToServer();
-            }, 2000);
-        });
-        ws.on('close', () => {
-            console.log('close');
-        });
-        ws.on('open', () => {
-            console.log('info', 'open');
-            schedulePings(ws);
-        });
-        ws.on('message', (message) => {
-            const parsedSequenceNumber = new Number(message.substring(message.length - SEQUENCE_NUMBER_LENGTH - 1, message.length - 1));
-            latencyTable[parsedSequenceNumber].responseReceived = Date.now();
-            latencyTable[parsedSequenceNumber].roundTrip = latencyTable[parsedSequenceNumber].responseReceived - latencyTable[parsedSequenceNumber].requestSent;
-            if (Object.keys(latencyTable).length === NUMBER_OF_TESTS) {
-                console.log('finished test');
-                console.log(JSON.stringify(latencyTable));
-            }
-        })
-    }
-
-    connectToServer();
+runTest({
+    payloadSize: parseInt(process.env.PAYLOAD_SIZE),
+    up: parseInt(process.env.UP_RATE_KBPS),
+    down: parseInt(process.env.DOWN_RATE_KBPS),
+    rtt: parseInt(process.env.ROUND_TRIP_TIME),
 });

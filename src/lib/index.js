@@ -3,7 +3,6 @@
 const os = require('os');
 const pfctl = require('./pfctl');
 const tc = require('./tc');
-const localHostTc = require('./localHostTc');
 
 function verify(options) {
   if (options.localhost) {
@@ -25,39 +24,25 @@ module.exports = {
 
     switch (os.platform()) {
       case 'darwin': {
-        if (options.localhost) {
-          throw new Error(
-            'Localhost on ' + os.platform() + ' not supported at the moment'
-          );
-        }
-
         return pfctl.start(options.up, options.down, options.rtt);
       }
 
       case 'linux': {
-        if (options.localhost) {
-          return localHostTc.start(options.rtt);
-        } else {
           return tc.start(options.up, options.down, options.rtt);
-        }
       }
 
       default:
         throw new Error('Platform ' + os.platform() + ' not supported');
     }
   },
-  async stop(options) {
+  async stop() {
     switch (os.platform()) {
       case 'darwin': {
         return pfctl.stop();
       }
 
       case 'linux': {
-        if (options.localhost) {
-          return localHostTc.stop();
-        } else {
-          return tc.stop();
-        }
+        return tc.stop();
       }
 
       default:

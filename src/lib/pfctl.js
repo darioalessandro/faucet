@@ -1,5 +1,5 @@
 'use strict';
-const sudo = require('./exec');
+const exec = require('./exec');
 const path = require('path');
 
 const confPath = path.resolve(__dirname, '..', 'conf');
@@ -11,15 +11,15 @@ module.exports = {
 
     await this.stop();
 
-    await sudo('dnctl', '-q', 'flush');
-    await sudo('dnctl', '-q', 'pipe', 'flush');
+    await exec('dnctl', '-q', 'flush');
+    await exec('dnctl', '-q', 'pipe', 'flush');
 
-    await sudo('dnctl', 'pipe', 1, 'config', 'delay', '0ms', 'noerror');
-    await sudo('dnctl', 'pipe', 2, 'config', 'delay', '0ms', 'noerror');
+    await exec('dnctl', 'pipe', 1, 'config', 'delay', '0ms', 'noerror');
+    await exec('dnctl', 'pipe', 2, 'config', 'delay', '0ms', 'noerror');
     // Needs the right path
-    await sudo('pfctl', '-f', pfctlConfPath);
+    await exec('pfctl', '-f', pfctlConfPath);
 
-    await sudo(
+    await exec(
       'dnctl',
       'pipe',
       1,
@@ -30,7 +30,7 @@ module.exports = {
       `${halfWayRTT}ms`
     );
 
-    await sudo(
+    await exec(
       'dnctl',
       'pipe',
       3,
@@ -40,13 +40,13 @@ module.exports = {
       'delay',
       `${halfWayRTT}ms`
     );
-    await sudo('pfctl', '-E');
+    await exec('pfctl', '-E');
   },
   async stop() {
-    await sudo('dnctl', '-q', 'flush');
-    await sudo('dnctl', '-q', 'pipe', 'flush');
-    await sudo('pfctl', '-f', '/etc/pf.conf');
-    await sudo('pfctl', '-E');
-    await sudo('pfctl', '-d');
+    await exec('dnctl', '-q', 'flush');
+    await exec('dnctl', '-q', 'pipe', 'flush');
+    await exec('pfctl', '-f', '/etc/pf.conf');
+    await exec('pfctl', '-E');
+    await exec('pfctl', '-d');
   }
 };

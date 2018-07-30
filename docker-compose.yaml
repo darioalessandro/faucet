@@ -19,6 +19,11 @@ services:
       - ALL
     privileged: true
     command: nodemon --config nodemon.json src/vehicle/index.js
+    environment:
+      - PAYLOAD_SIZE=5000
+      - UP_RATE_KBPS=50000
+      - DOWN_RATE_KBPS=50
+      - ROUND_TRIP_TIME=10
     env_file: .env
     build:
       context: .

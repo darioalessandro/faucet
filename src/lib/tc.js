@@ -10,7 +10,6 @@ async function getDefaultInterface() {
 }
 
 async function setLimits(up, down, halfWayRTT, iFace) {
-  console.log('set limits');
   try {
     await exec('tc', 'qdisc', 'add', 'dev', iFace, 'handle', 'ffff:', 'ingress');
     await exec('tc', 'filter', 'add', 'dev', iFace, 'parent', 'ffff:', 'protocol', 'ip', 'prio', '50',
@@ -39,9 +38,6 @@ module.exports = {
     }
 
     const iFace = await getDefaultInterface();
-    console.log(`interface`, iFace);
-    // await modProbe();
-    // await setup(iFace);
     await setLimits(up, down, halfWayRTT, iFace);
   },
   async stop() {
