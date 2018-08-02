@@ -34,7 +34,7 @@ const wsServer = new WebSocket.Server({
 });
 
 wsServer.on('connection', (connection, req) => {
-    console.log(`websocket connection on ${req.url}`);
+    // console.log(`websocket connection on ${req.url}`);
     onConnection(connection, uuid());
 });
 
@@ -46,9 +46,7 @@ function onConnection(socket, connId) {
     const address = socket._socket.remoteAddress;
     const port = socket._socket.remotePort;
     socketConnections[connId] = socket;
-
-    console.log('connection from %s:%s', address, port);
-
+    // console.log('connection from %s:%s', address, port);
     socket.on('message', message => {
         console.log('on message', Buffer.byteLength(message, 'utf8') / 1000, 'Kb');
         socket.send(message);

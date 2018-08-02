@@ -1,10 +1,10 @@
 version: '3.3'
 services:
-  vehicle-server:
+  loopback-server:
     cap_add:
       - ALL
     privileged: true
-    command: nodemon --config nodemon.json src/server/index.js
+    command: nodemon --config nodemon.json src/example/loopback-server/index.js
     env_file: .env
     build:
       context: .
@@ -14,16 +14,16 @@ services:
       - .:/app
     ports:
       - '3201:3201'
-  vehicle:
+  client:
     cap_add:
       - ALL
     privileged: true
-    command: nodemon --config nodemon.json src/vehicle/index.js
+    command: mocha src/example/client/tests/*
     environment:
       - PAYLOAD_SIZE=5000
-      - UP_RATE_KBPS=50000
-      - DOWN_RATE_KBPS=50
-      - ROUND_TRIP_TIME=10
+      - UP_RATE_KBPS=100
+      - DOWN_RATE_KBPS=100
+      - ROUND_TRIP_TIME=1
     env_file: .env
     build:
       context: .
@@ -32,4 +32,4 @@ services:
     volumes:
       - .:/app
     links:
-      - vehicle-server
+      - loopback-server

@@ -29,8 +29,6 @@
     "ws": "^6.0.0"
   },
   "scripts": {
-    "start-server": "nodemon src/server/index.js",
-    "start-vehicle": "nodemon src/vehicle/index.js",
     "precommit": "lint-staged"
   }
 }
