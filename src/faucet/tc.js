@@ -9,7 +9,7 @@ async function findTheDefaultInterface() {
   return result.stdout;
 }
 
-async function setLimits(up, down, halfWayRTT, iFace) {
+async function setLimits(up, /*down,*/ halfWayRTT, iFace) {
     // Configure up bitrate
     await exec('tc', 'qdisc', 'add', 'dev', iFace, 'root', 'handle', '1:0',
     'netem', 'delay', `${halfWayRTT}ms`, 'rate', `${up}kbit`);
@@ -24,12 +24,12 @@ async function setLimits(up, down, halfWayRTT, iFace) {
 }
 
 module.exports = {
-  async start(up, down, rtt) {
+  async start(up, rtt) {
     const halfWayRTT = rtt / 2;
     // Stop before starting.
     await this.stop();
     const iFace = await findTheDefaultInterface();
-    await setLimits(up, down, halfWayRTT, iFace);
+    await setLimits(up, /*down,*/ halfWayRTT, iFace);
   },
   async stop() {
     const iFace = await findTheDefaultInterface();
@@ -44,12 +44,6 @@ module.exports = {
       }
     } catch (e) {
       // ignore
-    }
-
-    try {
-      await exec('tc', 'qdisc', 'del', 'dev', 'ifb0', 'root');
-    } catch (e) {
-      // do nada
     }
   }
 };
